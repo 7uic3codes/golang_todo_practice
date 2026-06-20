@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"log"
+	"strconv"
 )
 
 type Todo struct {
@@ -11,6 +12,27 @@ type Todo struct {
 
 type TodoList struct {
 	tList map[string]Todo
+}
+
+// Needs to be a pointer because it needs to change the data
+// Without the function removing what we just did in a copy
+func (t *TodoList) AddTask(entry string) {
+	//Handle empty map addition
+	if t.tList == nil {
+		t.tList = make(map[string]Todo)
+	}
+	//User should be able to add the same task more than once
+	t.tList[entry] = Todo{
+		completed: false,
+	}
+}
+
+func (t *TodoList) RemoveTask(entry string) {
+	//If it exists, delete it
+	_, ok := t.tList[entry]
+	if ok {
+		delete(t.tList, entry)
+	}
 }
 
 func (t TodoList) MarkComplete(entry string) {
@@ -35,27 +57,15 @@ func (t TodoList) MarkIncomplete(entry string) {
 }
 
 func main() {
-	todo := TodoList{
-		tList: map[string]Todo{
-			"Get food": {
-				completed: false,
-			},
-			"Exercise": {
-				completed: true,
-			},
-			"Program": {
-				completed: false,
-			},
-			"Go Sledding": {
-				completed: true,
-			},
-			"Eat pie": {
-				completed: false,
-			},
-		},
+	todo := TodoList{}
+
+	// for i := 0; i < 100; i++ {
+	// 	todo.AddTask("Adding Task " + strconv.Itoa(i))
+	// }
+
+	for i := 0; i < 100; i++ {
+		todo.RemoveTask("Adding Task " + strconv.Itoa(i))
 	}
 
-	todo.MarkComplete("Get food")
-	todo.MarkIncomplete("Laugh")
 	fmt.Println(todo)
 }
